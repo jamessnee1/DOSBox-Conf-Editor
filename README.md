@@ -71,10 +71,6 @@ Edit `ConfValidator.java`:
 - Add to `ENUM_KEYS` for enumerated choices
 - Add to `INT_RANGE_KEYS` for numeric range keys
 
-### Adding keyboard shortcuts
-
-In `MainWindow.java`, attach `KeyCombination` accelerators to buttons or wire them to the `Scene`.
-
 ## License
 
 MIT License
