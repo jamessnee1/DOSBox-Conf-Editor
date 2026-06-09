@@ -22,12 +22,15 @@ public class App extends Application {
         String css = getClass().getResource("/com/dosboxeditor/styles.css").toExternalForm();
         scene.getStylesheets().add(css);
 
+
         primaryStage.setTitle(APP_NAME);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("dosboxconfeditor.png")));
         primaryStage.setMinWidth(1024);
         primaryStage.setMinHeight(768);
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setOnCloseRequest(mainWindow::handleCloseRequest);
+        primaryStage.centerOnScreen();
     }
 
     public static void main(String[] args) {
