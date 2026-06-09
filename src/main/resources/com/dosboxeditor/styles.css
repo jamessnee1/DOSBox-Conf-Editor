@@ -1,0 +1,255 @@
+/* DOSBox Config Editor – dark terminal palette */
+
+.root {
+    -fx-base: #1a1c1e;
+    -fx-background: #1a1c1e;
+    -fx-control-inner-background: #23262a;
+    -fx-text-fill: #d4d8dd;
+    -fx-font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13px;
+    /* theme tokens */
+    -dos-green: #4ade80;
+    -dos-amber: #fbbf24;
+    -dos-red:   #f87171;
+    -dos-blue:  #60a5fa;
+    -dos-border: #2e3238;
+    -dos-hover:  #2c3038;
+    -dos-select: #1e3a5f;
+}
+
+/* ── Toolbar ─────────────────────────────────────────── */
+.tool-bar {
+    -fx-background-color: #141618;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 10 6 10;
+}
+
+.tool-bar .button {
+    -fx-background-color: #2a2d32;
+    -fx-background-radius: 5;
+    -fx-text-fill: #d4d8dd;
+    -fx-padding: 5 14 5 14;
+    -fx-cursor: hand;
+    -fx-border-color: -dos-border;
+    -fx-border-radius: 5;
+}
+
+.tool-bar .button:hover {
+    -fx-background-color: -dos-hover;
+}
+
+.tool-bar .button:pressed {
+    -fx-background-color: #1e3a5f;
+}
+
+/* ── Search bar ──────────────────────────────────────── */
+.search-bar {
+    -fx-background-color: #141618;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 10;
+}
+
+.search-field {
+    -fx-background-color: #2a2d32;
+    -fx-background-radius: 5;
+    -fx-border-color: -dos-border;
+    -fx-border-radius: 5;
+    -fx-text-fill: #d4d8dd;
+    -fx-prompt-text-fill: #5a6070;
+    -fx-padding: 5 10;
+}
+
+.search-field:focused {
+    -fx-border-color: -dos-blue;
+}
+
+/* ── Section accordion ───────────────────────────────── */
+.accordion {
+    -fx-background-color: transparent;
+}
+
+.titled-pane {
+    -fx-text-fill: -dos-green;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #1e2124;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 12;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: -dos-hover;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: -dos-green;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #1a1c1e;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0;
+}
+
+/* ── Entry table ─────────────────────────────────────── */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: -dos-border;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1a1c1e;
+}
+
+.table-view .column-header {
+    -fx-background-color: #1e2124;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 0 1 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #8892a0;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 8;
+}
+
+.table-row-cell {
+    -fx-background-color: #1a1c1e;
+    -fx-border-color: transparent transparent -dos-border transparent;
+    -fx-cell-size: 32px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #1d1f23;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -dos-select;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: -dos-hover;
+}
+
+.table-cell {
+    -fx-text-fill: #d4d8dd;
+    -fx-padding: 0 8;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-cell.key-cell {
+    -fx-text-fill: -dos-amber;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 12px;
+}
+
+.table-cell.value-cell {
+    -fx-text-fill: -dos-green;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 12px;
+}
+
+.table-cell.comment-cell {
+    -fx-text-fill: #4a5568;
+    -fx-font-style: italic;
+    -fx-font-size: 11px;
+}
+
+/* ── Status bar ──────────────────────────────────────── */
+.status-bar {
+    -fx-background-color: #141618;
+    -fx-border-color: -dos-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 4 12;
+}
+
+.status-label {
+    -fx-text-fill: #5a6070;
+    -fx-font-size: 11px;
+}
+
+.status-label.modified {
+    -fx-text-fill: -dos-amber;
+}
+
+.status-label.ok {
+    -fx-text-fill: -dos-green;
+}
+
+.status-label.error {
+    -fx-text-fill: -dos-red;
+}
+
+/* ── Scrollbars ──────────────────────────────────────── */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: #141618;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #3a3f48;
+    -fx-background-radius: 3;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #4a5060;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ── Dialog / Alert overrides ────────────────────────── */
+.dialog-pane {
+    -fx-background-color: #1a1c1e;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #141618;
+}
+
+.dialog-pane .content {
+    -fx-text-fill: #d4d8dd;
+}
+
+/* ── Inline text field (editing) ─────────────────────── */
+.text-field {
+    -fx-background-color: #2a2d32;
+    -fx-background-radius: 3;
+    -fx-border-color: -dos-border;
+    -fx-border-radius: 3;
+    -fx-text-fill: -dos-green;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-padding: 3 6;
+}
+
+.text-field:focused {
+    -fx-border-color: -dos-blue;
+}
+
+.text-field.invalid {
+    -fx-border-color: -dos-red;
+}
+
+/* ── Tooltip ─────────────────────────────────────────── */
+.tooltip {
+    -fx-background-color: #23262a;
+    -fx-text-fill: #d4d8dd;
+    -fx-border-color: -dos-border;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+}
