@@ -1,6 +1,8 @@
 # DOSBox Config Editor
 
-A JavaFX desktop application for editing DOSBox `.conf` files, with a clean dark terminal aesthetic.
+### By James Snee (jamessnee1@gmail.com)
+
+A JavaFX desktop application to make creating and editing DOSBox `.conf` files easier.
 
 ## Features
 
@@ -18,7 +20,7 @@ A JavaFX desktop application for editing DOSBox `.conf` files, with a clean dark
 | Java | 17+ |
 | Maven | 3.8+ |
 
-JavaFX is downloaded automatically by Maven — no manual SDK install needed.
+JavaFX is downloaded automatically by Maven
 
 ## Build & Run
 
@@ -53,9 +55,11 @@ src/main/java/com/dosboxeditor/
 └── ui/
     ├── MainWindow.java          Root BorderPane layout
     ├── SectionPanel.java        Accordion of section tables
+    ├── PreviewPanel.java        Minimisable window displaying the preview image
     └── EditableValueCell.java   Inline editing TableCell
 src/main/resources/com/dosboxeditor/
 └── styles.css                   Dark terminal theme
+└── preview.pang                 Preview image
 ```
 
 ## Extending
