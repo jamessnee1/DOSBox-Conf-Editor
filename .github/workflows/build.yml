@@ -51,19 +51,6 @@ jobs:
             --type dmg \
             --app-version 1.0.0 \
             --icon dosboxconfeditor.icns \
-            --dest dist/  
-
-      - name: Package (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          jpackage \
-            --input target/ \
-            --name "DOSBox Config Editor" \
-            --main-jar dosbox-conf-editor-1.0.0.jar \
-            --main-class com.dosboxeditor.App \
-            --type deb \
-            --app-version 1.0.0 \
-            --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
             --dest dist/
 
       - name: Convert icon (Windows)
@@ -88,8 +75,44 @@ jobs:
             --icon dosboxconfeditor.ico `
             --dest dist/
 
+      - name: Package (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          jpackage \
+            --input target/ \
+            --name "DOSBox Config Editor" \
+            --main-jar dosbox-conf-editor-1.0.0.jar \
+            --main-class com.dosboxeditor.App \
+            --type deb \
+            --app-version 1.0.0 \
+            --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
+            --dest dist/
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: installer-${{ matrix.os }}
           path: dist/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "Build ${{ github.run_number }}"
+          body: "Automated build from commit ${{ github.sha }}"
+          files: |
+            artifacts/installer-macos-latest/*
+            artifacts/installer-ubuntu-latest/*
+            artifacts/installer-windows-latest/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
