@@ -40,6 +40,19 @@ jobs:
           sips -z 1024 1024 src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_512x512@2x.png
           iconutil -c icns icon.iconset -o dosboxconfeditor.icns
 
+      - name: Create minimal JRE (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          jlink \
+            --no-header-files \
+            --no-man-pages \
+            --compress=2 \
+            --strip-debug \
+            --add-modules java.base,java.desktop,java.logging,java.naming,\
+          java.prefs,java.sql,java.xml,javafx.controls,javafx.fxml,\
+          javafx.graphics,javafx.base \
+            --output custom-jre
+
       - name: Package (macOS)
         if: matrix.os == 'macos-latest'
         run: |
@@ -51,6 +64,7 @@ jobs:
             --type dmg \
             --app-version 1.0.0 \
             --icon dosboxconfeditor.icns \
+            --runtime-image custom-jre \
             --dest dist/
 
       - name: Convert icon (Windows)
@@ -60,6 +74,18 @@ jobs:
           magick src/main/resources/com/dosboxeditor/dosboxconfeditor.png `
             -define icon:auto-resize=256,128,64,48,32,16 `
             dosboxconfeditor.ico
+
+      - name: Create minimal JRE (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          jlink `
+            --no-header-files `
+            --no-man-pages `
+            --compress=2 `
+            --strip-debug `
+            --add-modules java.base,java.desktop,java.logging,java.naming,java.prefs,java.sql,java.xml,javafx.controls,javafx.fxml,javafx.graphics,javafx.base `
+            --output custom-jre
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
@@ -73,7 +99,21 @@ jobs:
             --type exe `
             --app-version 1.0.0 `
             --icon dosboxconfeditor.ico `
+            --runtime-image custom-jre `
             --dest dist/
+
+      - name: Create minimal JRE (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          jlink \
+            --no-header-files \
+            --no-man-pages \
+            --compress=2 \
+            --strip-debug \
+            --add-modules java.base,java.desktop,java.logging,java.naming,\
+          java.prefs,java.sql,java.xml,javafx.controls,javafx.fxml,\
+          javafx.graphics,javafx.base \
+            --output custom-jre
 
       - name: Package (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -86,6 +126,7 @@ jobs:
             --type deb \
             --app-version 1.0.0 \
             --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
+            --runtime-image custom-jre \
             --dest dist/
 
       - name: Upload artifact
@@ -126,6 +167,20 @@ jobs:
           export PATH=$JAVA_HOME/bin:$PATH
           mvn package -q
 
+      - name: Create minimal JRE (Steam Deck)
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          jlink \
+            --no-header-files \
+            --no-man-pages \
+            --compress=2 \
+            --strip-debug \
+            --add-modules java.base,java.desktop,java.logging,java.naming,\
+          java.prefs,java.sql,java.xml,javafx.controls,javafx.fxml,\
+          javafx.graphics,javafx.base \
+            --output custom-jre
+
       - name: Run jpackage to get app image dir
         run: |
           export JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64
@@ -138,6 +193,7 @@ jobs:
             --type app-image \
             --app-version 1.0.0 \
             --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
+            --runtime-image custom-jre \
             --dest dist/
 
       - name: Verify JavaFX is bundled
