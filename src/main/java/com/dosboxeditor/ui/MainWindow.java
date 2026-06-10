@@ -402,6 +402,27 @@ public class MainWindow extends BorderPane {
         addDefaultSection("mixer",
             new String[]{"nosound", "rate", "blocksize", "prebuffer"},
             new String[]{"false", "22050", "2048", "25"});
+        addDefaultSection("midi",
+                new String[]{"mpu401", "mididevice", "midiconfig"},
+                new String[]{"intelligent", "default", ""});
+        addDefaultSection("sblaster",
+                new String[]{"sbtype", "sbbase", "irq", "dma", "hdma", "sbmixer", "oplmode", "oplemu", "oplrate"},
+                new String[]{"sb16", "220", "7", "1", "5", "true", "auto", "default", "44100"});
+        addDefaultSection("gus",
+                new String[]{"gus", "gusrate", "gusbase", "gusirq", "gusdma", "ultradir"},
+                new String[]{"false", "44100", "240", "5", "3", "C:\\ULTRASND"});
+        addDefaultSection("speaker",
+                new String[]{"pcspeaker", "pcrate", "tandy", "tandyrate", "disney"},
+                new String[]{"false", "44100", "auto", "44100", "false"});
+        addDefaultSection("joystick",
+                new String[]{"joysticktype", "timed", "autofire", "swap34", "buttonwrap"},
+                new String[]{"auto", "true", "false", "false", "false"});
+        addDefaultSection("serial",
+                new String[]{"serial1", "serial2", "serial3", "serial4"},
+                new String[]{"dummy", "dummy", "disabled", "disabled"});
+        addDefaultSection("dos",
+                new String[]{"xms", "ems", "umb", "keyboardlayout"},
+                new String[]{"true", "true", "true", "auto"});
         addDefaultSection("autoexec",
             new String[]{""},
             new String[]{""});
