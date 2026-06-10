@@ -24,6 +24,22 @@ jobs:
       - name: Build fat JAR
         run: mvn package -q
 
+      - name: Convert icon (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          mkdir -p icon.iconset
+          sips -z 16 16     src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_16x16.png
+          sips -z 32 32     src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_16x16@2x.png
+          sips -z 32 32     src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_32x32.png
+          sips -z 64 64     src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_32x32@2x.png
+          sips -z 128 128   src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_128x128.png
+          sips -z 256 256   src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_128x128@2x.png
+          sips -z 256 256   src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_256x256.png
+          sips -z 512 512   src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_256x256@2x.png
+          sips -z 512 512   src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_512x512.png
+          sips -z 1024 1024 src/main/resources/com/dosboxeditor/dosboxconfeditor.png --out icon.iconset/icon_512x512@2x.png
+          iconutil -c icns icon.iconset -o dosboxconfeditor.icns
+
       - name: Package (macOS)
         if: matrix.os == 'macos-latest'
         run: |
@@ -34,7 +50,8 @@ jobs:
             --main-class com.dosboxeditor.App \
             --type dmg \
             --app-version 1.0.0 \
-            --dest dist/
+            --icon dosboxconfeditor.icns \
+            --dest dist/  
 
       - name: Package (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -46,7 +63,16 @@ jobs:
             --main-class com.dosboxeditor.App \
             --type deb \
             --app-version 1.0.0 \
+            --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
             --dest dist/
+
+      - name: Convert icon (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          magick src/main/resources/com/dosboxeditor/dosboxconfeditor.png `
+            -define icon:auto-resize=256,128,64,48,32,16 `
+            dosboxconfeditor.ico
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
@@ -59,14 +85,11 @@ jobs:
             --main-class com.dosboxeditor.App `
             --type exe `
             --app-version 1.0.0 `
+            --icon dosboxconfeditor.ico `
             --dest dist/
 
-      - name: Upload installer
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: dist/
-          asset_name: installer-${{ matrix.os }}
-          asset_content_type: application/octet-stream
+          name: installer-${{ matrix.os }}
+          path: dist/
