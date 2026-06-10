@@ -102,24 +102,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Install AppImage tools
+      - name: Install dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y libfuse2 wget
+          sudo apt-get install -y libfuse2 wget curl
+
+      - name: Install Liberica Full JDK 21 (includes JavaFX)
+        run: |
+          wget -q https://download.bell-sw.com/java/21.0.3+10/bellsoft-jdk21.0.3+10-linux-amd64-full.deb
+          sudo apt-get install -y ./bellsoft-jdk21.0.3+10-linux-amd64-full.deb
+          export JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          java -version
+
+      - name: Download AppImage tool
+        run: |
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
 
       - name: Build fat JAR
-        run: mvn package -q
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
+          mvn package -q
 
       - name: Run jpackage to get app image dir
         run: |
+          export JAVA_HOME=/usr/lib/jvm/bellsoft-java21-full-amd64
+          export PATH=$JAVA_HOME/bin:$PATH
           jpackage \
             --input target/ \
             --name "DOSBox Config Editor" \
@@ -130,19 +140,25 @@ jobs:
             --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
             --dest dist/
 
+      - name: Verify JavaFX is bundled
+        run: |
+          echo "Checking bundled JDK for JavaFX..."
+          find "dist/DOSBox Config Editor" -name "javafx*" | head -20
+          find "dist/DOSBox Config Editor" -name "*.so" | grep -i fx | head -20
+
       - name: Prepare AppDir structure
         run: |
           APPDIR=AppDir
           APP="DOSBox Config Editor"
-          mkdir -p $APPDIR/usr/bin
-          mkdir -p $APPDIR/usr/share/applications
-          mkdir -p $APPDIR/usr/share/icons
+          mkdir -p "$APPDIR/usr/bin"
+          mkdir -p "$APPDIR/usr/share/applications"
+          mkdir -p "$APPDIR/usr/share/icons"
           
-          # Copy jpackage output into AppDir
-          cp -r "dist/$APP" $APPDIR/usr/bin/
+          # Copy entire jpackage app-image output into AppDir
+          cp -r "dist/$APP/." "$APPDIR/usr/bin/$APP"
           
           # Create the .desktop file
-          cat > $APPDIR/usr/share/applications/dosbox-conf-editor.desktop << EOF
+          cat > "$APPDIR/usr/share/applications/dosbox-conf-editor.desktop" << EOF
           [Desktop Entry]
           Name=DOSBox Config Editor
           Exec=DOSBox Config Editor
@@ -153,19 +169,26 @@ jobs:
           
           # Copy icon
           cp src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
-             $APPDIR/usr/share/icons/dosboxconfeditor.png
+             "$APPDIR/usr/share/icons/dosboxconfeditor.png"
           
-          # Create AppRun entrypoint
-          cat > $APPDIR/AppRun << 'EOF'
+          # Create AppRun entrypoint — explicitly set JAVA_HOME to bundled JDK
+          cat > "$APPDIR/AppRun" << 'EOF'
           #!/bin/bash
           HERE="$(dirname "$(readlink -f "${0}")")"
-          exec "$HERE/usr/bin/DOSBox Config Editor/bin/DOSBox Config Editor" "$@"
+          APP_DIR="$HERE/usr/bin/DOSBox Config Editor"
+          export JAVA_HOME="$APP_DIR/runtime"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          # Tell JavaFX where to find its native libs
+          export LD_LIBRARY_PATH="$JAVA_HOME/lib:$JAVA_HOME/lib/server:$LD_LIBRARY_PATH"
+          exec "$APP_DIR/bin/DOSBox Config Editor" "$@"
           EOF
-          chmod +x $APPDIR/AppRun
+          chmod +x "$APPDIR/AppRun"
           
-          # Symlink desktop and icon to AppDir root (required by AppImage spec)
-          ln -sf usr/share/applications/dosbox-conf-editor.desktop $APPDIR/dosbox-conf-editor.desktop
-          ln -sf usr/share/icons/dosboxconfeditor.png $APPDIR/dosboxconfeditor.png
+          # Symlink desktop and icon to AppDir root
+          ln -sf usr/share/applications/dosbox-conf-editor.desktop \
+            "$APPDIR/dosbox-conf-editor.desktop"
+          ln -sf usr/share/icons/dosboxconfeditor.png \
+            "$APPDIR/dosboxconfeditor.png"
 
       - name: Build AppImage
         run: |
