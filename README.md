@@ -1,8 +1,27 @@
 # DOSBox Config Editor
 
+![Build Status](https://github.com/jamessnee1/DOSBox-Conf-Editor/actions/workflows/build.yml/badge.svg)
+[![Latest Release](https://img.shields.io/github/v/release/jamessnee1/DOSBox-Conf-Editor?label=latest%20release)](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/jamessnee1/DOSBox-Conf-Editor/total)](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases)
+
+
 ### By James Snee (jamessnee1@gmail.com)
 
 A JavaFX desktop application to make creating and editing DOSBox `.conf` files easier.
+
+## Download
+
+Get the latest installer for your platform:
+
+| Platform | Download |
+|----------|----------|
+| Windows | [Download .exe](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases/latest/download/DOSBox-Config-Editor-1.0.0.exe) |
+| MacOS | [Download .dmg](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases/latest/download/DOSBox-Config-Editor-1.0.0.dmg) |
+| Linux | [Download .deb](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases/latest/download/dosbox-config-editor_1.0.0-1_amd64.deb) |
+| Steam Deck | [Download .AppImage](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases/latest/download/DOSBox-Config-Editor-x86_64.AppImage) |
+
+> All releases are listed on the [Releases page](https://github.com/jamessnee1/DOSBox-Conf-Editor/releases).
+
 
 ## Features
 

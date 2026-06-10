@@ -94,8 +94,92 @@ jobs:
           name: installer-${{ matrix.os }}
           path: dist/
 
+  build-steamdeck:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Install AppImage tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y libfuse2 wget
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Build fat JAR
+        run: mvn package -q
+
+      - name: Run jpackage to get app image dir
+        run: |
+          jpackage \
+            --input target/ \
+            --name "DOSBox Config Editor" \
+            --main-jar dosbox-conf-editor-1.0.0.jar \
+            --main-class com.dosboxeditor.App \
+            --type app-image \
+            --app-version 1.0.0 \
+            --icon src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
+            --dest dist/
+
+      - name: Prepare AppDir structure
+        run: |
+          APPDIR=AppDir
+          APP="DOSBox Config Editor"
+          mkdir -p $APPDIR/usr/bin
+          mkdir -p $APPDIR/usr/share/applications
+          mkdir -p $APPDIR/usr/share/icons
+          
+          # Copy jpackage output into AppDir
+          cp -r "dist/$APP" $APPDIR/usr/bin/
+          
+          # Create the .desktop file
+          cat > $APPDIR/usr/share/applications/dosbox-conf-editor.desktop << EOF
+          [Desktop Entry]
+          Name=DOSBox Config Editor
+          Exec=DOSBox Config Editor
+          Icon=dosboxconfeditor
+          Type=Application
+          Categories=Utility;
+          EOF
+          
+          # Copy icon
+          cp src/main/resources/com/dosboxeditor/dosboxconfeditor.png \
+             $APPDIR/usr/share/icons/dosboxconfeditor.png
+          
+          # Create AppRun entrypoint
+          cat > $APPDIR/AppRun << 'EOF'
+          #!/bin/bash
+          HERE="$(dirname "$(readlink -f "${0}")")"
+          exec "$HERE/usr/bin/DOSBox Config Editor/bin/DOSBox Config Editor" "$@"
+          EOF
+          chmod +x $APPDIR/AppRun
+          
+          # Symlink desktop and icon to AppDir root (required by AppImage spec)
+          ln -sf usr/share/applications/dosbox-conf-editor.desktop $APPDIR/dosbox-conf-editor.desktop
+          ln -sf usr/share/icons/dosboxconfeditor.png $APPDIR/dosboxconfeditor.png
+
+      - name: Build AppImage
+        run: |
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir \
+            DOSBox-Config-Editor-x86_64.AppImage
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installer-steamdeck
+          path: DOSBox-Config-Editor-x86_64.AppImage
+
   release:
-    needs: build
+    needs: [build, build-steamdeck]
     runs-on: ubuntu-latest
     permissions:
       contents: write
