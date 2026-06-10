@@ -200,5 +200,6 @@ jobs:
             artifacts/installer-macos-latest/*
             artifacts/installer-ubuntu-latest/*
             artifacts/installer-windows-latest/*
+            artifacts/installer-steamdeck/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
